@@ -1,0 +1,33 @@
+/* src/style.css */
+:root {
+  /* 定义洋柿子计划的基础色板 */
+  --tomato-red: #e65c5c;        /* 柔和的洋柿子红 */
+  --tomato-red-light: #fbe6e6;  /* 极浅的红，用于悬停/背景 */
+  --leaf-green: #7bb059;        /* 柔和的叶子绿 */
+  --cream-white: #fdfbf7;       /* 米白色背景 */
+  --text-main: #4a4a4a;         /* 柔和的深灰字体 */
+
+  /* 覆盖 Element Plus 的默认主题变量 (将蓝色变成红色) */
+  --el-color-primary: var(--tomato-red) !important;
+  --el-color-primary-light-3: #ed8d8d !important;
+  --el-color-primary-light-5: #f2adad !important;
+  --el-color-primary-light-7: #f6cece !important;
+  --el-color-primary-light-9: var(--tomato-red-light) !important;
+  
+  --el-color-success: var(--leaf-green) !important;
+  --el-bg-color-page: var(--cream-white) !important;
+  --el-text-color-primary: var(--text-main) !important;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: var(--el-bg-color-page);
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
+  'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+}
+
+#app {
+  height: 100vh;
+}
