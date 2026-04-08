@@ -48,19 +48,67 @@
       </div>
       
       <!-- 悬浮窗主体 -->
+      <!-- 悬浮窗主体 -->
       <div class="drawer-content">
         <h3 style="color: var(--tomato-red); margin-top: 0;">开始专注</h3>
-        <el-input placeholder="给专注命名(如:英语)" v-model="focusName" size="small" style="margin-bottom: 15px;"/>
         
-        <el-radio-group v-model="timerType" size="small" style="margin-bottom: 15px;">
+        <el-input 
+          placeholder="给专注命名(如:英语)" 
+          v-model="focusStore.focusName" 
+          size="small" 
+          style="margin-bottom: 15px;"
+          :disabled="focusStore.isRunning"
+        />
+        
+        <el-radio-group 
+          v-model="focusStore.timerType" 
+          size="small" 
+          style="margin-bottom: 15px;"
+          :disabled="focusStore.isRunning"
+        >
           <el-radio-button label="countdown">倒计时</el-radio-button>
           <el-radio-button label="stopwatch">正向计时</el-radio-button>
         </el-radio-group>
+
+        <!-- 如果是倒计时且未开始，允许输入分钟数 -->
+        <div v-if="focusStore.timerType === 'countdown' && !focusStore.isRunning" style="margin-bottom: 15px; text-align: center;">
+             设定分钟: <el-input-number v-model="focusStore.initialMinutes" :min="1" :max="120" size="small" />
+        </div>
         
-        <!-- 简化的 UI 占位 -->
-        <div class="timer-display">25:00</div>
+        <!-- 大大的时间显示 -->
+        <div class="timer-display" :class="{'is-running': focusStore.isRunning}">
+            {{ focusStore.formattedTime }}
+        </div>
         
-        <el-button type="primary" color="#7bb059" round style="width: 100%;">开始</el-button>
+        <!-- 按钮组 -->
+        <div class="action-buttons" style="width: 100%; display: flex; gap: 10px;">
+            <el-button 
+                v-if="!focusStore.isRunning" 
+                type="primary" 
+                color="var(--leaf-green)" 
+                round 
+                style="flex: 1;" 
+                @click="focusStore.startTimer"
+            >开始</el-button>
+            
+            <template v-else>
+                 <el-button 
+                    v-if="focusStore.timerType === 'stopwatch'" 
+                    type="primary" 
+                    color="var(--tomato-red)" 
+                    round 
+                    style="flex: 1;" 
+                    @click="focusStore.finishFocus(false)"
+                >结束记录</el-button>
+                <el-button 
+                    color="#f56c6c" 
+                    plain
+                    round 
+                    style="flex: 1;" 
+                    @click="focusStore.stopTimer"
+                >放弃</el-button>
+            </template>
+        </div>
       </div>
     </div>
   </el-container>
@@ -69,12 +117,13 @@
 <script setup>
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { useFocusStore } from '../store/focus'
 
 const route = useRoute()
 const drawerVisible = ref(false)
 const focusName = ref('')
 const timerType = ref('countdown')
-
+const focusStore = useFocusStore()
 // 切换抽屉状态
 const toggleDrawer = () => {
   drawerVisible.value = !drawerVisible.value
