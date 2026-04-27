@@ -11,8 +11,10 @@ const request = axios.create({
 request.interceptors.request.use(
     config => {
         const token = localStorage.getItem('token')
-        // 等我们以后做了登录，这里要负责把 Token 放到请求头里带给后端
-        config.headers['Authorization'] = 'Bearer ' + localStorage.getItem('token')
+        // 只有在确实有 token 时才携带，避免出现 "Bearer null"
+        if (token) {
+            config.headers['Authorization'] = 'Bearer ' + token
+        }
         return config
     },
     error => {
@@ -43,16 +45,20 @@ request.interceptors.response.use(
         }
     },
     error => {
+        // axios 只有在“拿不到响应”(断网/后端没开/跨域被浏览器拦截)时才算真正的网络错误
         const status = error?.response?.status
         const backendMsg = error?.response?.data?.msg
+        const hasResponse = !!error?.response
+
         if (status === 401) {
             ElMessage.error(backendMsg || '未登录或登录已失效，请重新登录')
-        } else if (error.response && error.response.status === 401) {
-            ElMessage.error('登录已过期，请重新登录')
             localStorage.removeItem('token')
             localStorage.removeItem('userInfo')
             router.push('/login')
-        } else{
+        } else if (hasResponse) {
+            // 例如 404/500：后端有响应，但不是 2xx，不应提示“网络未连接”
+            ElMessage.error(backendMsg || `请求失败（HTTP ${status}）`)
+        } else {
             console.error('err' + error) // for debug
             ElMessage.error('网络连接失败，请检查后端是否启动')
         }

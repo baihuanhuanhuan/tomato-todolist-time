@@ -1,6 +1,12 @@
 <template>
   <div class="stats-container" v-loading="loading">
     
+    <!-- 页面标题和刷新按钮 -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h2 style="margin: 0; color: var(--text-main);">专注数据中心</h2>
+      <el-button type="primary" color="var(--leaf-green)" icon="Refresh" circle @click="fetchData"></el-button>
+    </div>
+
     <!-- 顶部概览卡片 -->
     <el-row :gutter="20" class="summary-cards">
       <el-col :span="12">
@@ -189,8 +195,8 @@ const initChart = () => {
                 barWidth: '40%',
                 itemStyle: {
                     color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                        { offset: 0, color: 'var(--tomato-red)' }, // 洋柿子红渐变
-                        { offset: 1, color: 'var(--tomato-red-light)' }
+                        { offset: 0, color: '#ff6b6b' }, 
+                        { offset: 1, color: '#ffb3b3' }
                     ]),
                     borderRadius: [4, 4, 0, 0]
                 }

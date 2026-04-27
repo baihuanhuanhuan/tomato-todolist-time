@@ -21,6 +21,10 @@
           <el-icon><DataLine /></el-icon>
           <span>专注统计</span>
         </el-menu-item>
+        <el-menu-item index="/friends">
+          <el-icon><User /></el-icon>
+          <span>好友列表</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
 
@@ -29,9 +33,20 @@
       <el-header class="header">
         <div class="header-title">{{ getTitle() }}</div>
         <div class="user-info">
-          <el-avatar size="small" style="background-color: var(--leaf-green);">User</el-avatar>
-        </div>
-      </el-header>
+          <el-dropdown trigger="click">
+          <span class="el-dropdown-link" style="display:flex; align-items:center; cursor:pointer;">
+           <el-avatar :src="userInfo.avatar || '/tomato.png'" size="small" style="margin-right: 8px;"></el-avatar>
+           {{ userInfo.username || '游客' }}
+         </span>
+         <template #dropdown>
+           <el-dropdown-menu>
+             <el-dropdown-item @click="$router.push('/profile')">修改资料</el-dropdown-item>
+             <el-dropdown-item @click="logout" divided style="color: red;">退出登录</el-dropdown-item>
+           </el-dropdown-menu>
+         </template>
+       </el-dropdown>
+      </div>
+    </el-header>
 
       <!-- 主体内容区 (子路由渲染的地方) -->
       <el-main class="main-content">
@@ -118,8 +133,11 @@
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useFocusStore } from '../store/focus'
+import { useRouter } from 'vue-router'
 
+const userInfo = ref(JSON.parse(localStorage.getItem('userInfo') || '{}'))
 const route = useRoute()
+const router = useRouter()
 const drawerVisible = ref(false)
 const focusName = ref('')
 const timerType = ref('countdown')
@@ -134,6 +152,11 @@ const getTitle = () => {
   if (route.path.includes('/tasks')) return '📝 任务大厅'
   if (route.path.includes('/stats')) return '📊 专注统计'
   return '洋柿子计划安排'
+}
+const logout = () => {
+  localStorage.removeItem('token')
+  localStorage.removeItem('userInfo')
+  router.push('/login')
 }
 </script>
 
